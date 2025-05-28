@@ -1,4 +1,4 @@
-module github.com/ccxt/ccxt/go/v4
+module github.com/COPXAI/ccxt-copx
 
 go 1.23.4
 
