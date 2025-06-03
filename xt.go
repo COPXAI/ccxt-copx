@@ -2841,13 +2841,16 @@ func (this *xt) CreateContractOrder(symbol interface{}, typeVar interface{}, sid
 		} else {
 			AddElementToObject(request, "orderSide", ToUpper(side))
 			AddElementToObject(request, "orderType", ToUpper(typeVar))
-			// 添加止盈止损参数到 request 中
-			if IsTrue(isStopLoss) {
-				AddElementToObject(request, "triggerStopPrice", this.PriceToPrecision(symbol, stopLoss))
+			// 添加止盈止损参数到 request 中(使用自定义字段)
+			customTakeProfit := this.SafeNumber(params, "custom_take_profit")
+			customStopLoss := this.SafeNumber(params, "custom_stop_loss")
+			if IsTrue(!IsEqual(customStopLoss, nil)) {
+				AddElementToObject(request, "triggerStopPrice", this.PriceToPrecision(symbol, customStopLoss))
 			}
-			if IsTrue(isTakeProfit) {
-				AddElementToObject(request, "triggerProfitPrice", this.PriceToPrecision(symbol, takeProfit))
+			if IsTrue(!IsEqual(customTakeProfit, nil)) {
+				AddElementToObject(request, "triggerProfitPrice", this.PriceToPrecision(symbol, customTakeProfit))
 			}
+
 			if IsTrue(GetValue(market, "linear")) {
 
 				response = (<-this.PrivateLinearPostFutureTradeV1OrderCreate(this.Extend(request, params)))
