@@ -1211,7 +1211,7 @@ func (this *gate) FetchMarkets(optionalArgs ...interface{}) <-chan interface{} {
 		}
 
 		promises := (<-promiseAll(rawPromises))
-		PanicOnError(promises)
+		//PanicOnError(promises)
 		var spotMarkets interface{} = this.SafeValue(promises, 0, []interface{}{})
 		var contractMarkets interface{} = this.SafeValue(promises, 1, []interface{}{})
 		var optionMarkets interface{} = this.SafeValue(promises, 2, []interface{}{})
