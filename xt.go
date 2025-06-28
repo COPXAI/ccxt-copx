@@ -245,6 +245,7 @@ func (this *xt) Describe() interface{} {
 						"future/user/v1/balance/funding-rate-list":  1,
 						"future/user/v1/balance/list":               1,
 						"future/user/v1/position/adl":               1,
+						"future/user/v1/position/list":              1,
 						"future/user/v1/position":                   1,
 						"future/user/v1/user/collection/list":       1,
 						"future/user/v1/user/listen-key":            1,
@@ -289,6 +290,7 @@ func (this *xt) Describe() interface{} {
 						"future/user/v1/balance/funding-rate-list":  1,
 						"future/user/v1/balance/list":               1,
 						"future/user/v1/position/adl":               1,
+						"future/user/v1/position/list":              1,
 						"future/user/v1/position":                   1,
 						"future/user/v1/user/collection/list":       1,
 						"future/user/v1/user/listen-key":            1,
@@ -5495,7 +5497,7 @@ func (this *xt) FetchPosition(symbol interface{}, optionalArgs ...interface{}) <
 			PanicOnError(response)
 		} else {
 
-			response = (<-this.PrivateLinearGetFutureUserV1PositionList(this.Extend(request, params)))
+			response = (<-this.PrivateLinearGetFutureUserV1Position(this.Extend(request, params)))
 			PanicOnError(response)
 		}
 		//
@@ -5574,7 +5576,7 @@ func (this *xt) FetchPositions(optionalArgs ...interface{}) <-chan interface{} {
 			PanicOnError(response)
 		} else {
 
-			response = (<-this.PrivateLinearGetFutureUserV1PositionList(params))
+			response = (<-this.PrivateLinearGetFutureUserV1Position(params))
 			PanicOnError(response)
 		}
 		//
@@ -5644,6 +5646,9 @@ func (this *xt) ParsePosition(position interface{}, optionalArgs ...interface{})
 	var positionType interface{} = this.SafeString(position, "positionType")
 	var marginMode interface{} = Ternary(IsTrue((IsEqual(positionType, "CROSSED"))), "cross", "isolated")
 	var collateral interface{} = this.SafeNumber(position, "isolatedMargin")
+	var maintenanceMarginString interface{} = this.SafeString(position, "floatingPL")
+	var collateralString interface{} = this.SafeString(position, "isolatedMargin")
+	var marginRatio interface{} = this.ParseNumber(Precise.StringDiv(maintenanceMarginString, collateralString, 4))
 	return this.SafePosition(map[string]interface{}{
 		"info":                        position,
 		"id":                          nil,
@@ -5655,7 +5660,7 @@ func (this *xt) ParsePosition(position interface{}, optionalArgs ...interface{})
 		"contracts":                   this.SafeNumber(position, "positionSize"),
 		"contractSize":                GetValue(market, "contractSize"),
 		"entryPrice":                  this.SafeNumber(position, "entryPrice"),
-		"markPrice":                   nil,
+		"markPrice":                   this.SafeNumber(position, "calMarkPrice"),
 		"notional":                    nil,
 		"leverage":                    this.SafeInteger(position, "leverage"),
 		"collateral":                  collateral,
@@ -5663,11 +5668,11 @@ func (this *xt) ParsePosition(position interface{}, optionalArgs ...interface{})
 		"maintenanceMargin":           nil,
 		"initialMarginPercentage":     nil,
 		"maintenanceMarginPercentage": nil,
-		"unrealizedPnl":               nil,
+		"unrealizedPnl":               this.SafeNumber(position, "floatingPL"),
 		"liquidationPrice":            nil,
 		"marginMode":                  marginMode,
 		"percentage":                  nil,
-		"marginRatio":                 nil,
+		"marginRatio":                 marginRatio,
 	})
 }
 
