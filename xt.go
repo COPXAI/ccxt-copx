@@ -5671,7 +5671,7 @@ func (this *xt) ParsePosition(position interface{}, optionalArgs ...interface{})
 		"unrealizedPnl":               this.SafeNumber(position, "floatingPL"),
 		"liquidationPrice":            nil,
 		"marginMode":                  marginMode,
-		"percentage":                  nil,
+		"percentage":                  marginRatio,
 		"marginRatio":                 marginRatio,
 	})
 }
