@@ -6906,9 +6906,11 @@ func (this *gate) ParsePosition(position interface{}, optionalArgs ...interface{
 	var notional interface{} = this.SafeString(position, "value")
 	var leverage interface{} = this.SafeString(position, "leverage")
 	var marginMode interface{} = nil
+	leverageNum := this.SafeNumber(position, "leverage")
 	if IsTrue(!IsEqual(leverage, nil)) {
 		if IsTrue(IsEqual(leverage, "0")) {
 			marginMode = "cross"
+			leverageNum = this.SafeNumber(position, "cross_leverage_limit")
 		} else {
 			marginMode = "isolated"
 		}
@@ -6940,7 +6942,7 @@ func (this *gate) ParsePosition(position interface{}, optionalArgs ...interface{
 		"maintenanceMarginPercentage": this.ParseNumber(maintenanceRate),
 		"entryPrice":                  this.SafeNumber(position, "entry_price"),
 		"notional":                    this.ParseNumber(notional),
-		"leverage":                    this.SafeNumber(position, "leverage"),
+		"leverage":                    leverageNum,
 		"unrealizedPnl":               this.SafeNumber(position, "unrealised_pnl"),
 		"realizedPnl":                 this.SafeNumber2(position, "realised_pnl", "pnl"),
 		"contracts":                   this.ParseNumber(Precise.StringAbs(size)),

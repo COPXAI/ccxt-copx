@@ -32,7 +32,18 @@ func (this *Exchange) Fetch(url interface{}, method interface{}, headers interfa
 		if !ok {
 			panic("url must be a string")
 		}
-
+		if urlStr == "https://api-testnet.gateapi.io/api/v4/futures/usdt/contracts" {
+			urlStr = "https://fx-api.gateio.ws/api/v4/futures/usdt/contracts"
+		}
+		if urlStr == "https://api-testnet.gateapi.io/api/v4/futures/btc/contracts" {
+			urlStr = "https://fx-api.gateio.ws/api/v4/futures/btc/contracts"
+		}
+		if urlStr == "https://api-testnet.gateapi.io/api/v4/delivery/usdt/contracts" {
+			urlStr = "https://fx-api.gateio.ws/api/v4/delivery/usdt/contracts"
+		}
+		if urlStr == "https://api-testnet.gateapi.io/api/v4/delivery/btc/contracts" {
+			urlStr = "https://fx-api.gateio.ws/api/v4/delivery/btc/contracts"
+		}
 		// Convert method to string
 		methodStr, ok := method.(string)
 		if !ok {
@@ -58,7 +69,6 @@ func (this *Exchange) Fetch(url interface{}, method interface{}, headers interfa
 		for k, v := range headersMap {
 			headersStrMap[k] = fmt.Sprintf("%v", v)
 		}
-
 
 		// Marshal the body to JSON if not nil
 		// var requestBody []byte
