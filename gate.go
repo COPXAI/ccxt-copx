@@ -4027,7 +4027,7 @@ func (this *gate) FetchOrderTrades(id interface{}, optionalArgs ...interface{}) 
 		//
 
 		response := (<-this.FetchMyTrades(symbol, since, limit, map[string]interface{}{
-			"order_id": id,
+			"order": id,
 		}))
 		PanicOnError(response)
 
