@@ -8,6 +8,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -172,11 +174,41 @@ func (this *Exchange) Fetch(url interface{}, method interface{}, headers interfa
 		}
 
 		// Unmarshal the response body
+		//var result interface{}
+		//err = json.Unmarshal(respBody, &result)
+		//if err != nil {
+		//	// panic(fmt.Sprintf("failed to unmarshal response body: %v", err))
+		//	result = string(respBody)
+		//}
+
 		var result interface{}
-		err = json.Unmarshal(respBody, &result)
-		if err != nil {
-			// panic(fmt.Sprintf("failed to unmarshal response body: %v", err))
-			result = string(respBody)
+		if isValidFuturesOrderURLRegex(urlStr) {
+			var result1 map[string]interface{}
+			decoder := json.NewDecoder(bytes.NewReader(respBody))
+			decoder.UseNumber() // 关键点：防止精度丢失
+			err = decoder.Decode(&result1)
+			if err != nil {
+				fmt.Printf("Error unmarshalling response: %v\n", err)
+				result = string(respBody)
+			}
+			if id, ok := result1["id"].(json.Number); ok {
+				result1["id"] = string(id)
+			}
+			body1, err := json.Marshal(result1)
+			if err != nil {
+				body1 = respBody
+			}
+			err = json.Unmarshal(body1, &result)
+			if err != nil {
+				// panic(fmt.Sprintf("failed to unmarshal response body: %v", err))
+				result = string(respBody)
+			}
+		} else {
+			err = json.Unmarshal(respBody, &result)
+			if err != nil {
+				// panic(fmt.Sprintf("failed to unmarshal response body: %v", err))
+				result = string(respBody)
+			}
 		}
 
 		// Log the response (for debugging purposes)
@@ -219,4 +251,45 @@ func (this *Exchange) HandleHttpStatusCode(code interface{}, reason interface{},
 		panic(functionError(errorMessage))
 	}
 
+}
+
+// 这里筛选获取订单消息的url(订单id太大,转换存在精度损失)
+func isValidFuturesOrderURLRegex(rawURL string) bool {
+	// 解析URL，忽略查询参数和片段
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return false
+	}
+	// 获取路径部分
+	path := u.Path
+	if strings.Contains(rawURL, "gate") {
+		// 定义所有可能的模式
+		patterns := []string{
+			`^/futures/[^/]+/orders/[^/]+/?$`,
+			`^/futures/[^/]+/price_orders/[^/]+/?$`,
+			`^/api/v4/futures/[^/]+/orders/[^/]+/?$`,
+			`^/api/v4/futures/[^/]+/price_orders/[^/]+/?$`,
+		}
+		for _, pattern := range patterns {
+			matched, _ := regexp.MatchString(pattern, path)
+			if matched {
+				return true
+			}
+		}
+	}
+	//if strings.Contains(rawURL, "binance") {
+	//	// 定义所有可能的模式
+	//	patterns := []string{
+	//		// Binance 模式
+	//		`^/fapi/v1/order/?$`,
+	//		`^/fapi/v1/order/[^/]+/?$`,
+	//	}
+	//	for _, pattern := range patterns {
+	//		matched, _ := regexp.MatchString(pattern, path)
+	//		if matched {
+	//			return true
+	//		}
+	//	}
+	//}
+	return false
 }
