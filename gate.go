@@ -641,7 +641,7 @@ func (this *gate) Describe() interface{} {
 			"secret": true,
 		},
 		"headers": map[string]interface{}{
-			"X-Gate-Channel-Id": "ccxt",
+			"X-Gate-Channel-Id": "337401",
 		},
 		"options": map[string]interface{}{
 			"timeDifference":          0,
