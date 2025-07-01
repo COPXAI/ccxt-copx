@@ -265,10 +265,17 @@ func isValidFuturesOrderURLRegex(rawURL string) bool {
 	if strings.Contains(rawURL, "gate") {
 		// 定义所有可能的模式
 		patterns := []string{
+			// 查询订单url
 			`^/futures/[^/]+/orders/[^/]+/?$`,
 			`^/futures/[^/]+/price_orders/[^/]+/?$`,
 			`^/api/v4/futures/[^/]+/orders/[^/]+/?$`,
 			`^/api/v4/futures/[^/]+/price_orders/[^/]+/?$`,
+
+			// 下单url
+			`^/futures/usdt/orders`,
+			`^/api/v4/futures/usdt/orders`,
+			`^/futures/usdt/price_orders`,
+			`^/api/v4/futures/usdt/price_orders`,
 		}
 		for _, pattern := range patterns {
 			matched, _ := regexp.MatchString(pattern, path)
