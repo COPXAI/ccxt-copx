@@ -194,6 +194,9 @@ func (this *Exchange) Fetch(url interface{}, method interface{}, headers interfa
 			if id, ok := result1["id"].(json.Number); ok {
 				result1["id"] = string(id)
 			}
+			if id, ok := result1["orderId"].(json.Number); ok {
+				result1["orderId"] = string(id)
+			}
 			body1, err := json.Marshal(result1)
 			if err != nil {
 				body1 = respBody
@@ -284,19 +287,19 @@ func isValidFuturesOrderURLRegex(rawURL string) bool {
 			}
 		}
 	}
-	//if strings.Contains(rawURL, "binance") {
-	//	// 定义所有可能的模式
-	//	patterns := []string{
-	//		// Binance 模式
-	//		`^/fapi/v1/order/?$`,
-	//		`^/fapi/v1/order/[^/]+/?$`,
-	//	}
-	//	for _, pattern := range patterns {
-	//		matched, _ := regexp.MatchString(pattern, path)
-	//		if matched {
-	//			return true
-	//		}
-	//	}
-	//}
+	if strings.Contains(rawURL, "binance") {
+		// 定义所有可能的模式
+		patterns := []string{
+			// Binance 模式
+			`^/fapi/v1/order/?$`,
+			`^/fapi/v1/order/[^/]+/?$`,
+		}
+		for _, pattern := range patterns {
+			matched, _ := regexp.MatchString(pattern, path)
+			if matched {
+				return true
+			}
+		}
+	}
 	return false
 }
