@@ -58,11 +58,13 @@ func (this *gate) Describe() interface{} {
 					"futures":  "https://api-testnet.gateapi.io/api/v4",
 					"delivery": "https://api-testnet.gateapi.io/api/v4",
 					"options":  "https://api-testnet.gateapi.io/api/v4",
+					"spot":     "https://api-testnet.gateapi.io/api/v4",
 				},
 				"private": map[string]interface{}{
 					"futures":  "https://api-testnet.gateapi.io/api/v4",
 					"delivery": "https://api-testnet.gateapi.io/api/v4",
 					"options":  "https://api-testnet.gateapi.io/api/v4",
+					"spot":     "https://api-testnet.gateapi.io/api/v4",
 				},
 			},
 			"referral": map[string]interface{}{
