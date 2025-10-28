@@ -460,6 +460,7 @@ func (this *gate) Describe() interface{} {
 						"{settle}/dual_comp/positions/{contract}/margin":     1,
 						"{settle}/dual_comp/positions/{contract}/leverage":   1,
 						"{settle}/dual_comp/positions/{contract}/risk_limit": 1,
+						"{settle}/positions/cross_mode":                      1,
 						"{settle}/orders":                                    0.4,
 						"{settle}/batch_orders":                              0.4,
 						"{settle}/countdown_cancel_all":                      0.4,
